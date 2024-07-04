@@ -96,7 +96,8 @@ class RedactingFormatter(logging.Formatter):
         Initialize the RedactingFormatter with the fields to be obfuscated.
 
         Args:
-            fields (List[str]): A list of strings representing all fields to obfuscate.
+            fields (List[str]): A list of strings representing all fields
+            to obfuscate.
         """
 
         super(RedactingFormatter, self).__init__(self.FORMAT)
