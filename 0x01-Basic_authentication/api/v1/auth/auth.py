@@ -43,16 +43,16 @@ class Auth():
         if not slash_path:
             tmp_path += '/'
 
-        for exc in excluded_paths:
-            l_exc = len(exc)
-            if l_exc == 0:
+        for excluded_path in excluded_paths:
+            l_excluded_path = len(excluded_path)
+            if l_excluded_path == 0:
                 continue
 
-            if exc[l_exc - 1] != '*':
-                if tmp_path == exc:
+            if excluded_path[l_excluded_path - 1] != '*':
+                if tmp_path == excluded_path:
                     return False
             else:
-                if exc[:-1] == path[:l_exc - 1]:
+                if excluded_path[:-1] == path[:l_excluded_path - 1]:
                     return False
 
         return True
