@@ -30,15 +30,31 @@ class Auth():
             bool: True if authentication is required,
             False otherwise.
         """
-        if path is None:
+        if path is None or excluded_paths is None or excluded_paths == []:
             return True
-        if path in excluded_paths:
-            return False
-        if excluded_paths is None or not excluded_paths:
+
+        l_path = len(path)
+        if l_path == 0:
             return True
-        for execluded_path in excluded_paths:
-            if fnmatch.fnmatch(path, execluded_path):
-                return False
+
+        slash_path = True if path[l_path - 1] == '/' else False
+
+        tmp_path = path
+        if not slash_path:
+            tmp_path += '/'
+
+        for exc in excluded_paths:
+            l_exc = len(exc)
+            if l_exc == 0:
+                continue
+
+            if exc[l_exc - 1] != '*':
+                if tmp_path == exc:
+                    return False
+            else:
+                if exc[:-1] == path[:l_exc - 1]:
+                    return False
+
         return True
 
     def authorization_header(self, request=None) -> str:
