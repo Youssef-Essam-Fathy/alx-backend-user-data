@@ -6,6 +6,7 @@ from typing import (
     List,
     TypeVar as TypeVar
 )
+import fnmatch
 
 
 class Auth():
@@ -36,7 +37,8 @@ class Auth():
         if excluded_paths is None or not excluded_paths:
             return True
         for execluded_path in excluded_paths:
-            
+            if fnmatch.fnmatch(path, execluded_path):
+                return False
         return True
 
     def authorization_header(self, request=None) -> str:
