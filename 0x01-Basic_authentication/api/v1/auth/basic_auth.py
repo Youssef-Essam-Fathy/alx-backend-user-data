@@ -2,8 +2,8 @@
 """ Module of BasicAuth config
 """
 from api.v1.auth.auth import Auth
-from typing import Tuple
-import re
+from typing import Tuple, TypeVar
+from models.user import User
 import base64
 
 
@@ -87,3 +87,32 @@ class BasicAuth(Auth):
                 ':'
             )
             return (first_str, second_str)
+
+    def user_object_from_credentials(
+            self,
+            user_email: str,
+            user_pwd: str
+    ) -> TypeVar('User'):
+        """_summary_
+
+        Args:
+            self (_type_): _description_
+        """
+        if user_email is None or not isinstance(
+            user_email,
+            str
+        ):
+            return None
+        if user_pwd is None or not isinstance(
+            user_pwd,
+            str
+        ):
+            return None
+        users = User.search({'email': user_email})
+        if not users:
+            return None
+        user = users[0]
+        if not user.is_valid_password(user_pwd):
+            return None
+
+        return user
