@@ -2,6 +2,8 @@
 """ Module of BasicAuth config
 """
 from api.v1.auth.auth import Auth
+from typing import Tuple
+import re
 import base64
 
 
@@ -61,3 +63,27 @@ class BasicAuth(Auth):
             return decoded_str.decode('utf-8')
         except Exception:
             return None
+
+    def extract_user_credentials(
+            self,
+            decoded_base64_authorization_header: str
+    ) -> Tuple[str, str]:
+        """_summary_
+
+        Args:
+            decoded_base64_authorization_header (str): _description_
+
+        Returns:
+            Tuple[str, str]: _description_
+        """
+        if decoded_base64_authorization_header is None:
+            return (None, None)
+        if not isinstance(decoded_base64_authorization_header, str):
+            return (None, None)
+        if not decoded_base64_authorization_header.__contains__(':'):
+            return (None, None)
+        else:
+            first_str, second_str = decoded_base64_authorization_header.split(
+                ':'
+            )
+            return (first_str, second_str)
