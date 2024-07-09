@@ -16,6 +16,15 @@ class BasicAuth(Auth):
             self,
             authorization_header: str
     ) -> str:
+        """ getting the base64 of the string authorization_header
+
+        Args:
+            authorization_header (str): a string to split
+
+        Returns:
+            str: Base64 part of the Authorization header
+            for a Basic Authentication
+        """
         if authorization_header is None:
             return None
         if not isinstance(authorization_header, str):
