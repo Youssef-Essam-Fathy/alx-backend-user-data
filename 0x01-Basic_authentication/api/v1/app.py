@@ -12,6 +12,48 @@ import os
 app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+auth = None
+auth_type = getenv('AUTH_TYPE')
+if auth_type == "auth":
+    from api.v1.auth.auth import Auth
+    auth = Auth()
+
+
+@app.before_request
+def before_request() -> None:
+    """Method to handle authentication
+    and authorization before each request.
+
+    This method ensures that each request is properly
+    authenticated and authorized before proceeding.
+    It performs the following checks:
+
+    1. If `auth` is None, the function returns immediately,
+    allowing the request to proceed.
+    2. If the request path is not in the list of excluded paths,
+    the function proceeds with authorization checks.
+    3. If the `Authorization` header is missing from the request,
+    a 401 Unauthorized response is returned.
+    4. If the current user cannot be identified from the request,
+    a 403 Forbidden response is returned.
+
+    The list of excluded paths allows certain endpoints
+    to be accessible without authentication.
+
+    Returns:
+        None
+    """
+    if auth is None:
+        return
+    if not auth.require_auth(
+        request.path,
+        ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    ):
+        return
+    if auth.authorization_header(request) is None:
+        abort(401)
+    if auth.current_user(request) is None:
+        abort(403)
 
 
 @app.errorhandler(404)
