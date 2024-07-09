@@ -98,19 +98,17 @@ class BasicAuth(Auth):
         Args:
             self (_type_): _description_
         """
-        if user_email is None or not isinstance(
-            user_email,
-            str
-        ):
+        if user_email is None:
             return None
-        if user_pwd is None or not isinstance(
-            user_pwd,
-            str
-        ):
+        elif type(user_email) is not str:
             return None
-        users = User.search({'email': user_email})
-        if not users:
+        elif user_pwd is None:
             return None
+        elif type(user_pwd) is not str:
+            return None
+
+        from models.user import User
+
         try:
             user = User.search({'email': user_email})
         except Exception:
@@ -123,3 +121,23 @@ class BasicAuth(Auth):
                 if u.is_valid_password(user_pwd):
                     return u
             return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """
+        retrieves and Overloads Auth and
+        the User instance for a given request
+        Args:
+            request:
+
+        Returns:
+
+        """
+        authorization_header = self.authorization_header(request)
+        base64_authorization_header = self.extract_base64_authorization_header(
+            authorization_header)
+        decoded_base64_authorization_header = \
+            self.decode_base64_authorization_header(
+                base64_authorization_header)
+        user_email, user_pwd = self.extract_user_credentials(
+            decoded_base64_authorization_header)
+        return self.user_object_from_credentials(user_email, user_pwd)
