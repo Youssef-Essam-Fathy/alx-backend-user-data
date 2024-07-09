@@ -6,8 +6,6 @@ from typing import (
     List,
     TypeVar as TypeVar
 )
-import fnmatch
-
 
 class Auth():
     """ Auth class for managing API authentication
