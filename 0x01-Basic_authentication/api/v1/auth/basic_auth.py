@@ -2,6 +2,7 @@
 """ Module of BasicAuth config
 """
 from api.v1.auth.auth import Auth
+import base64
 
 
 class BasicAuth(Auth):
@@ -16,7 +17,7 @@ class BasicAuth(Auth):
             self,
             authorization_header: str
     ) -> str:
-        """ getting the base64 of the string authorization_header
+        """ getting the Base64 of the string authorization_header
 
         Args:
             authorization_header (str): a string to split
@@ -37,3 +38,26 @@ class BasicAuth(Auth):
                 return splt[1]
             else:
                 return None
+
+    def decode_base64_authorization_header(
+      self,
+      base64_authorization_header: str
+    ) -> str:
+        """ Decoding the Base64 string base64_authorization_header
+
+        Args:
+            base64_authorization_header (str):
+            a Base64 string to decode
+        Returns:
+            str: the decoded value of a
+            Base64 string base64_authorization_header
+        """
+        if base64_authorization_header is None:
+            return None
+        if not isinstance(base64_authorization_header, str):
+            return None
+        try:
+            decoded_str = base64.b64decode(base64_authorization_header)
+            return decoded_str.decode('utf-8')
+        except Exception:
+            return None
