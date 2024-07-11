@@ -83,7 +83,7 @@ class Auth():
         """
         return None
 
-    def session_cookie(self, request=None) -> str:
+    def session_cookie(self, request=None) -> None:
         """ returns a cookie value from a request
         """
         if request is None:
