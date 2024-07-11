@@ -52,8 +52,8 @@ class SessionAuth(Auth):
             return False
         if not session_id:
             return False
-        if not self.user_id_for_session_id(session_id):
+        if not self.user_id_for_session_id[session_id]:
             return False
-        user_id = self.user_id_by_session_id(session_id)
+        user_id = self.user_id_by_session_id[session_id]
         del user_id
         return True
