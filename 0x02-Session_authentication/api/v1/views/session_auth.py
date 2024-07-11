@@ -8,7 +8,6 @@ from os import getenv
 from api.v1.app import auth
 
 
-
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login():
     """ Login view function
@@ -29,7 +28,6 @@ def login():
 
     if not user.is_valid_password(password):
         return jsonify({"error": "wrong password"}), 401
-
 
     session_id = auth.create_session(user.id)
     response = jsonify(user.to_json())
