@@ -6,6 +6,7 @@ from uuid import uuid4
 from typing import TypeVar
 from models.user import User
 
+
 class SessionAuth(Auth):
     """  class SessionAuth that inherits from Auth
     """
@@ -31,7 +32,7 @@ class SessionAuth(Auth):
             return None
         user_id = self.user_id_by_session_id.get(session_id)
         return user_id
-    
+
     def current_user(self, request=None) -> TypeVar('User'):
         """ returns a User instance based on a cookie valu
         """
