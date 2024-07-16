@@ -7,6 +7,7 @@ from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
 
+
 def _hash_password(password: str) -> bytes:
     """Takes in password string argument
     Returns bytes (salted_hashed)
@@ -22,7 +23,7 @@ class Auth:
         """ Initial method
         """
         self._db = DB()
-    
+
     def register_user(self, email: str, password: str) -> User:
         """ Registers a new user with the database
         """
