@@ -71,24 +71,19 @@ class DB:
             raise NoResultFound
         return result
 
-    def update_user(self, user_id: str, **kwargs) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Use find_user_by to locate the user to update
+        Update user's attribute as passed in methods argument
+        Commit changes to database
+        Raises ValueError if argument does not correspond to user
+        attribute passed
         """
-        Update a user in the database.
-
-        Args:
-            user_id (int): The user ID.
-            **kwargs: Arbitrary keyword arguments to update the user.
-
-        Returns:
-            None
-        """
-        try:
-            user = self.find_user_by(id=user_id)
-            user.email = kwargs.get('email', user.email)
-            user.hashed_password = kwargs.get('hashed_password',
-                                              user.hashed_password)
-            self._session.add(user)
-            self._session.commit()
-            return None
-        except ValueError:
-            raise
+        user_to_update = self.find_user_by(id=user_id)
+        user_keys = ['id', 'email', 'hashed_password', 'session_id',
+                     'reset_token']
+        for key, value in kwargs.items():
+            if key in user_keys:
+                setattr(user_to_update, key, value)
+            else:
+                raise ValueError
+        self._session.commit()
