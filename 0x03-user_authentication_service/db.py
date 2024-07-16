@@ -42,12 +42,12 @@ class DB:
         Returns:
             User: The newly created User object.
         """
-        user = User(email=email, hashed_password=hashed_password)
-        self._session.add(user)
+        new_user = User(email=email, hashed_password=hashed_password)
+        self._session.add(new_user)
         self._session.commit()
-        return user
+        return new_user
 
-    def find_user_by(self, **args: dict) -> User:
+    def find_user_by(self, **kwargs: dict) -> User:
         """
         Find a user in the database based on input arguments.
 
@@ -61,16 +61,17 @@ class DB:
             NoResultFound: If no results are found.
             InvalidRequestError: If invalid query arguments are passed.
         """
-        try:
-            user = self._session.query(User).filter_by(**args).first()
-            if user is None:
-                raise NoResultFound
-            return user
-        except InvalidRequestError:
-            self._session.rollback()
-            raise
+        user_keys = ['id', 'email', 'hashed_password', 'session_id'
+                     'reset_token']
+        for key in kwargs.keys():
+            if key not in user_keys:
+                raise InvalidRequestError
+        user = self._session.query(User).filter_by(**kwargs).first()
+        if user is None:
+            raise NoResultFound
+        return user
 
-    def update_user(self, user_id: str, **args: dict) -> None:
+    def update_user(self, user_id: str, **kwargs: dict) -> None:
         """
         Update a user in the database.
 
@@ -83,8 +84,8 @@ class DB:
         """
         try:
             user = self.find_user_by(id=user_id)
-            user.email = args.get('email', user.email)
-            user.hashed_password = args.get('hashed_password',
+            user.email = kwargs.get('email', user.email)
+            user.hashed_password = kwargs.get('hashed_password',
                                             user.hashed_password)
             self._session.add(user)
             self._session.commit()
