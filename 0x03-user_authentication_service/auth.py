@@ -19,7 +19,7 @@ def _hash_password(password: str) -> bytes:
 def _generate_uuid() -> str:
     """ Generate uuid
     """
-    return str(uuid.uuid)
+    return str(uuid)
 
 
 class Auth:
