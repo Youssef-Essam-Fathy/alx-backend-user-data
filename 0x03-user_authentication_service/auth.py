@@ -5,7 +5,7 @@ Auth module
 import bcrypt
 
 
-def _hash_password(password: str) -> str:
+def _hash_password(password: str) -> bytes:
     """Takes in password string argument
     Returns bytes (salted_hashed)
     """
