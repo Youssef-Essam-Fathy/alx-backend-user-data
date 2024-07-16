@@ -61,15 +61,15 @@ class DB:
             NoResultFound: If no results are found.
             InvalidRequestError: If invalid query arguments are passed.
         """
-        user_keys = ['id', 'email', 'hashed_password', 'session_id'
+        user_keys = ['id', 'email', 'hashed_password', 'session_id',
                      'reset_token']
         for key in kwargs.keys():
             if key not in user_keys:
                 raise InvalidRequestError
-        user = self._session.query(User).filter_by(**kwargs).first()
-        if user is None:
+        result = self._session.query(User).filter_by(**kwargs).first()
+        if result is None:
             raise NoResultFound
-        return user
+        return result
 
     def update_user(self, user_id: str, **kwargs: dict) -> None:
         """
@@ -86,7 +86,7 @@ class DB:
             user = self.find_user_by(id=user_id)
             user.email = kwargs.get('email', user.email)
             user.hashed_password = kwargs.get('hashed_password',
-                                            user.hashed_password)
+                                              user.hashed_password)
             self._session.add(user)
             self._session.commit()
             return None
