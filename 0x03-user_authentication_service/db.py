@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
+from sqlalchemy.exc import InvalidRequestError, NoResultFound
 
 from user import Base, User
 
@@ -22,14 +23,6 @@ class DB:
         Base.metadata.create_all(self._engine)
         self.__session = None
 
-    def add_user(self, email: str, hashed_password: str) -> object:
-        """Add a new user to the database
-        """
-        new_user = User(email=email, hashed_password=hashed_password)
-        self._session.add(new_user)
-        self._session.commit()
-        return new_user
-
     @property
     def _session(self) -> Session:
         """Memoized session object
@@ -38,3 +31,22 @@ class DB:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
+
+    def add_user(self, email: str, hashed_password: str) -> object:
+        """Add a new user to the database
+        """
+        new_user = User(email=email, hashed_password=hashed_password)
+        self._session.add(new_user)
+        self._session.commit()
+        return new_user
+
+    def find_user_by(self, **kwargs):
+        """Find a user by any field
+        """
+        try:
+            user = self._session.query(User).filter_by(**kwargs).first()
+            if user is None:
+                raise NoResultFound
+            return user
+        except InvalidRequestError:
+            raise
