@@ -4,7 +4,6 @@ Basic Flask Module
 """
 from flask import Flask, jsonify, request, abort
 from auth import Auth
-from sqlalchemy.orm.exc import NoResultFound
 
 app = Flask(__name__)
 
@@ -39,12 +38,15 @@ def login():
     email = request.form.get('email')
     password = request.form.get('password')
 
-    try:
-        if AUTH.valid_login(email, password):
-            return jsonify({"email": email, "message": "logged in"})
-        else:
-            abort(401)
-    except NoResultFound:
+    if not email or not password:
+        abort(400)
+
+    if AUTH.valid_login(email, password):
+        session_id = AUTH.create_session(email)
+        response = jsonify({"email": email, "message": "logged in"})
+        response.set_cookie("session_id", session_id)
+        return response
+    else:
         abort(401)
 
 
