@@ -80,19 +80,22 @@ def profile() -> str:
     return jsonify({"email": user}), 200
 
 
-@app.route('/reset_password', methods=['POST'], strict_slashes=False)
-def get_reset_password_token_route() -> str:
-    """POST /reset_password, - email,
-    Returns 403 status code if email not registered
-    Generate token and respond with 200 HTTP status if exists
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile():
+    """GET /profile
+    Return:
+        - 200 and JSON payload if user is found
+        - 403 if session ID is invalid or user is not found
     """
-    user_request = request.form
-    user_email = user_request.get('email', '')
-    is_registered = AUTH.create_session(user_email)
-    if not is_registered:
+    session_id = request.cookies.get("session_id")
+    if session_id is None:
         abort(403)
-    token = AUTH.get_reset_password_token(user_email)
-    return jsonify({"email": user_email, "reset_token": token})
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None:
+        abort(403)
+
+    return jsonify({"email": user.email}), 200
 
 
 @app.route('/reset_password', methods=['PUT'], strict_slashes=False)
