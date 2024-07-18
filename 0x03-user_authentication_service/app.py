@@ -50,7 +50,7 @@ def login():
         abort(401)
 
 
-@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
+@app.route('/sessions', methods=['DELETE', 'GET'], strict_slashes=False)
 def logout():
     """ Logout route
     """
