@@ -50,19 +50,21 @@ def login():
         abort(401)
 
 
-@app.route('/sessions', methods=['DELETE', 'GET'], strict_slashes=False)
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout():
     """ Logout route
     """
-    session_id = request.cookies.get('session_id')
-    user = AUTH.get_user_from_session_id(session_id)
+    if request.method == 'DELETE':
+        session_id = request.cookies.get('session_id')
+        user = AUTH.get_user_from_session_id(session_id)
 
-    if user:
-        AUTH.destroy_session(user.email)
-        return redirect('/')
-    else:
-        abort(403)
-
+        if user:
+            AUTH.destroy_session(user.id)
+            response = redirect('/')
+            response.set_cookie('session_id', '', expires=0)
+            return response
+        else:
+            abort(403)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
